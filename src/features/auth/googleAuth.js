@@ -1,8 +1,7 @@
-import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const provider = new GoogleAuthProvider();
-const auth = getAuth()
 
 export {
-    provider, auth
+    provider
 }

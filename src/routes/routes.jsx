@@ -3,6 +3,7 @@ import Notfound from "../components/Notfound";
 import App from "../App";
 import FeedPage from "../pages/FeedPage";
 import ProfilePage from "../pages/ProfilePage";
+import Signin from "../pages/Signin";
 
 const routes = createBrowserRouter([
     {
@@ -18,6 +19,10 @@ const routes = createBrowserRouter([
                 element: <ProfilePage />,
             },
         ],
+    },
+    {
+        path: "/signin",
+        element: <Signin/>
     },
     {
         path: "*", // Matches any undefined route
