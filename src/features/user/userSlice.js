@@ -1,19 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-initialState = {
-    username
-}
-
 export const userSlice = createSlice({
     name: 'user',
-    initialState,
+    initialState: {
+        username: '',
+        firstName: '',
+        lastName: '',
+        avatar: '',
+        coverImage: '',
+        email: '',
+        isVerified: false
+    },
     reducers: {
         setUser: (state, action) => {
+            console.log("USER PAYLOAD", action.payload);
+            const payload = action.payload.user;
 
+            state.username = payload.displayName;
+            state.firstName = payload.displayName.split(" ")[0];
+            state.lastName = payload.displayName.split(" ")[1];
+            state.email = payload.email;
+            state.avatar = payload.photoURL;
+            state.isVerified = payload.emailVerified;
         },
-        getUser: (state, action) => {
-
-        }
     }
 })
 

@@ -4,6 +4,7 @@ import App from "../App";
 import FeedPage from "../pages/FeedPage";
 import ProfilePage from "../pages/ProfilePage";
 import Signin from "../pages/Signin";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const routes = createBrowserRouter([
     {
@@ -12,11 +13,16 @@ const routes = createBrowserRouter([
         children: [
             {
                 path: "feed", // Relative path to `/app/feed`
-                element: <FeedPage />,
+                element: <ProtectedRoute>
+                        <FeedPage />,
+                    </ProtectedRoute>
             },
             {
                 path: "profile", // Relative path to `/app/profile`
-                element: <ProfilePage />,
+                element: 
+                <ProtectedRoute>
+                    <ProfilePage />,
+                </ProtectedRoute>
             },
         ],
     },

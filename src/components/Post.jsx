@@ -5,7 +5,12 @@ import SendIcon from '@mui/icons-material/Send';
 
 const Post = ({post}) => {
   return (
-    <article className='w-[50%] mx-auto bg-gray-100 p-8 rounded-3xl'>
+    <article className='w-[50%] mx-auto bg-gray-100 p-8 rounded-3xl' style={{
+        //   backgroundImage: `url("${post.media[0]}")`,
+        backgroundColor: "#eeea",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+    }}>
         <div className='flex flex-row gap-4'>
               <Avatar sx={{
                   width: 56,
@@ -26,8 +31,8 @@ const Post = ({post}) => {
         <img src={post.media[0]} className='w-full bg-cover rounded-xl'/>:
         slider}
         <div className='pt-4 flex flex-row items-center justify-between'>
-             <Button variant='contained' className='rounded-2xl' endIcon={<FavoriteIcon color='red'/>} disableElevation>{post.likes}</Button> 
-             <Button variant='outlined' color='disabled' className='rounded-2xl' endIcon={<SendIcon color='red'/>} disableElevation>share</Button> 
+              <Button variant='contained' sx={{backgroundColor: 'lightpink', borderRadius: 8, fontWeight: 700}} endIcon={<FavoriteIcon color='orange'/>} disableElevation>{post.likes}</Button> 
+              <Button variant='outlined' sx={{ borderRadius: 8 }} color='disabled' className='rounded-2xl' endIcon={<SendIcon color='red'/>} disableElevation>share</Button> 
         </div>
     </article>
   )

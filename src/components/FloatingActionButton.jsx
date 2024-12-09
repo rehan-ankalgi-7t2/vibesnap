@@ -11,7 +11,7 @@ const FloatingActionButton = ({handleClick}) => {
             bottom: 32,       // Position it 32px from the bottom
             right: 32,
         }}>
-            <AddIcon sx={{color: "white"}}/>
+            <AddIcon color='white'/>
         </IconButton>
     </Tooltip>
   )

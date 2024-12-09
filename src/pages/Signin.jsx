@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux'
 import { setToken } from '../features/auth/authSlice'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { firebaseApp } from '../services/firebase'
+import { useNavigate } from 'react-router-dom'
+import { setUser } from '../features/user/userSlice'
 // import { firebaseAuth } from '../services/firebase'
 
 const auth = getAuth(firebaseApp);
@@ -13,6 +15,7 @@ const provider = new GoogleAuthProvider;
 const Signin = () => {
   // variable & constants declations
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   // functions section
   const signInWithGoogle = async () => {
@@ -26,7 +29,9 @@ const Signin = () => {
           console.log("MALIIIIK user data aagaya", user)
 
           dispatch(setToken({token}));
-          dispatch()
+          dispatch(setUser({user}));
+
+          navigate("/feed")
       }).catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
