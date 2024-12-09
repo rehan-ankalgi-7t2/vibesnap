@@ -7,6 +7,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { firebaseApp } from '../services/firebase'
 import { useNavigate } from 'react-router-dom'
 import { setUser } from '../features/user/userSlice'
+import { createNewUser } from '../features/user/userActions'
 // import { firebaseAuth } from '../services/firebase'
 
 const auth = getAuth(firebaseApp);
@@ -25,8 +26,8 @@ const Signin = () => {
           const token = credential.accessToken;
           const user = result.user;
 
-          console.log("MALIIIIK token aagaya", token)
-          console.log("MALIIIIK user data aagaya", user)
+          // create new user in the database
+          createNewUser(result.user);
 
           dispatch(setToken({token}));
           dispatch(setUser({user}));

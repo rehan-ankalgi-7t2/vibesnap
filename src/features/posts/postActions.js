@@ -1,4 +1,3 @@
-// postActions.js
 import { collection, getDoc, getDocs, query } from "firebase/firestore";
 import { fetchPostsStart, fetchPostsSuccess, fetchPostsError } from "./postSlice";
 import { db } from "../../services/firebase";
@@ -12,7 +11,6 @@ export const fetchPosts = () => async (dispatch) => {
             id: doc.id,
             ...doc.data(),
         }));
-        console.log("MALIIIIIIIIIK", posts)
         dispatch(fetchPostsSuccess(posts));
     } catch (error) {
         dispatch(fetchPostsError(error.message));
@@ -40,14 +38,51 @@ export const fetchPostsFromSupabase = () => async (dispatch) => {
     }
 }
 
-export const createNewPost = () => async (dispatch) => {
+export const createNewPost = async (postData) => {
+    try {
+        // upload all files to the bucket
+        // retrive all the file links
+
+        // insert the post in the db
+        const { error } = await supabase
+            .from('users')
+            .insert({
+                // post data
+            })
+
+        if (error) {
+            return customResponse(false, 'error creating post', null, error)
+        }
+    } catch (error) {
+        console.error(error.message)
+    }
+}
+
+export const deletePost = async (dispatch) => {
+    try {
+        const { error } = await supabase
+            .from('posts')
+            .delete()
+            .eq('id', {/* selected id */})
+
+        if (error) {
+            return customResponse(false, 'error deleting post', null, error)
+        }
+    } catch (error) {
+        console.error(error.message)
+    }
+}
+
+export const updatePost = () => async (dispatch) => {
     dispatch(fetchPostsStart());
 
     try {
         const { data, error } = await supabase
             .from('posts')
-            .select()
-            .order('created_at', { ascending: false })
+            .update({
+                // fields
+            })
+            .eq('id', {/* selected id */ })
 
         if (data) {
             dispatch(fetchPostsSuccess({ posts: data.data }));
