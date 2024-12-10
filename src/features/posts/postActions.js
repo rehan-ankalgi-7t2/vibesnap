@@ -45,7 +45,7 @@ export const createNewPost = async (postData) => {
 
         // insert the post in the db
         const { error } = await supabase
-            .from('users')
+            .from('posts')
             .insert({
                 // post data
             })

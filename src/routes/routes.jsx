@@ -5,6 +5,7 @@ import FeedPage from "../pages/FeedPage";
 import ProfilePage from "../pages/ProfilePage";
 import Signin from "../pages/Signin";
 import ProtectedRoute from "../components/ProtectedRoute";
+import LoginPage from "../pages/LoginPage";
 
 const routes = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ const routes = createBrowserRouter([
     {
         path: "/signin",
         element: <Signin/>
+    },
+    {
+        path: "/login",
+        element: <LoginPage/>
     },
     {
         path: "*", // Matches any undefined route
