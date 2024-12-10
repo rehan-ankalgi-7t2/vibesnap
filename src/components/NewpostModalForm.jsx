@@ -1,11 +1,15 @@
 import { CloudUpload, Delete } from '@mui/icons-material';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Modal, styled, TextField, Typography } from '@mui/material'
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Modal, styled, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import MultiChipTextField from './MultiChipTextField';
+import { uploadFilesToSupabase } from '../utils/fileHelper';
 
 const NewpostModalForm = ({isOpen, handleClose}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [chips, setChips] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    const [isMaxHashtags, setIsMaxHastags] = useState(false);
     const MAX_FILES = 5; // Maximum number of files allowed
+    const MAX_HASHTAGS_COUNT = 10;
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -23,10 +27,6 @@ const NewpostModalForm = ({isOpen, handleClose}) => {
         setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const handleCancel = () => {
-        // setSelectedFiles([])
-    }
-
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
         clipPath: 'inset(50%)',
@@ -39,20 +39,61 @@ const NewpostModalForm = ({isOpen, handleClose}) => {
         width: 1,
     });
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && inputValue.trim()) {
+            if (chips.length >= MAX_HASHTAGS_COUNT) {
+                setIsMaxHastags(true)
+                return
+            }
+
+            // Prevent duplicate entries
+            if (!chips.includes(inputValue.trim())) {
+                setChips((prevChips) => [...prevChips, inputValue.trim()]);
+            }
+
+            setInputValue('');
+            event.preventDefault(); // Prevent form submission or unexpected behavior
+        }
+    };
+
+    const handleDelete = (chipToDelete) => {
+        setChips((prevChips) => prevChips.filter((chip) => chip !== chipToDelete));
+        setIsMaxHashtags(false);
+    };
+
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const formJson = Object.fromEntries(formData.entries());
+
+        try {
+            // Upload files to Supabase and get URLs
+            const fileUrls = await uploadFilesToSupabase(selectedFiles);
+            console.log("MALIK FILE URLS IDHAR HAI: ",fileUrls);
+            formJson.mediaFiles = fileUrls; // Replace file names with URLs
+
+            // Add hashtags
+            formJson.hashtags = chips;
+
+            console.log("POST FORM DATA: ", formJson);
+
+            // Handle form submission logic (e.g., API call)
+            // await handlePostSubmission(formJson);
+
+            // Close dialog
+            handleClose();
+        } catch (error) {
+            console.error("Error uploading files or submitting post:", error)
+        }
+    }
+
   return (
       <Dialog
           open={isOpen}
           onClose={handleClose}
           PaperProps={{
               component: 'form',
-              onSubmit: (event) => {
-                  event.preventDefault();
-                  const formData = new FormData(event.currentTarget);
-                  const formJson = Object.fromEntries(formData.entries());
-                  const email = formJson.email;
-                  console.log(email);
-                  handleClose();
-              },
+              onSubmit: handleFormSubmit,
           }}
       >
           <DialogTitle>Share your vibe ✨</DialogTitle>
@@ -96,7 +137,33 @@ const NewpostModalForm = ({isOpen, handleClose}) => {
                     </div>
                 ))}
               </ul>
-              <MultiChipTextField/>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '400px', marginTop: '24px' }}>
+                  <TextField
+                      label="Add some hashtags"
+                      variant="standard"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Type and press Enter"
+                      fullWidth
+                  />
+                  {isMaxHashtags ?
+                      <Typography variant='caption' color="error">
+                          Max hashtags added
+                      </Typography>
+                      : ''
+                  }
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {chips.map((chip, index) => (
+                          <Chip
+                              key={index}
+                              label={chip}
+                              onDelete={() => handleDelete(chip)}
+                              color="disabled"
+                          />
+                      ))}
+                  </Box>
+              </Box>
           </DialogContent>
           <DialogActions>
               <Button variant='contained' color='error' onClick={handleClose}>Cancel</Button>

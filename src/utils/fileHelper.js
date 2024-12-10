@@ -1,27 +1,35 @@
 import supabase from "../services/supabaseService";
 
-async function uploadFilesToBucket(files) {
-    const uploadPromises = Array.from(files).map(async (file) => {
-        const filePath = `uploads/${file.name}`; // You can customize the folder structure
+const uploadFilesToSupabase = async (files) => {
+    const fileUrls = [];
+
+    for (const file of files) {
+        // Skip empty files
+        if (file.size === 0) {
+            console.warn(`Skipping empty file: ${file.name}`);
+            continue;
+        }
+        
+        const fileName = `${Date.now()}_${file.name}`; // Unique file name
         const { data, error } = await supabase.storage
-            .from(import.meta.env.VITE_SUPABASE_BUCKET_NAME)
-            .upload(filePath, file, {
-                cacheControl: '3600',
-                upsert: false, // Prevent overwriting files with the same name
-            });
+            .from(import.meta.env.VITE_SUPABASE_BUCKET_NAME) // Replace with your bucket name
+            .upload(`posts/${fileName}`, file); // Path in the bucket
 
         if (error) {
-            console.error(`Error uploading ${file.name}:`, error.message);
-            return { success: false, file: file.name, error: error.message };
+            throw new Error(`Failed to upload ${file.name}: ${error.message}`);
         }
 
-        console.log(`Uploaded ${file.name} successfully:`, data);
-        return { success: true, file: file.name };
-    });
+        // Get public URL for the uploaded file
+        const { publicUrl } = supabase.storage
+            .from(import.meta.env.VITE_SUPABASE_BUCKET_NAME)
+            .getPublicUrl(`posts/${fileName}`);
 
-    return Promise.all(uploadPromises);
-}
+        fileUrls.push(publicUrl);
+    }
+
+    return fileUrls;
+};
 
 export {
-    uploadFilesToBucket
+    uploadFilesToSupabase
 }

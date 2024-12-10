@@ -23,8 +23,8 @@ const Post = ({post}) => {
         </div>
         <p className='py-4'>{post.description}</p>
         <div className='pb-4'>
-            {post.hashtags.map((ht) => (
-                <span className='text-sky-400'>{ht}</span>
+            {post.hashtags.map((ht, idx=0) => (
+                <span className='text-sky-400' key={idx++}>{ht}</span>
             )) }
         </div>
         {post.media.length < 2 ? 
