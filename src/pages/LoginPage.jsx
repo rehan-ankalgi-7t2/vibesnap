@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Box,
     Button,
@@ -6,22 +6,51 @@ import {
     Typography,
     Link,
     Stack,
+    CircularProgress,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useNavigate } from "react-router-dom";
+import AuthBannerImage from "../assets/images/auth-banner.png";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { googleSignIn } from "../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { isLoading, error } = useSelector((state) => state.auth);
 
-    const handleLoginWithGoogle = () => {
-        console.log("Google login clicked");
-        // Add logic to handle Google login
-    };
-
-    const handleLogin = (event) => {
-        event.preventDefault();
-        console.log("Form submitted");
-        // Add logic to handle email/password login
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await dispatch(googleSignIn()).unwrap();
+            console.log("Login successful:", result);
+            toast.success('Login successful', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "Colored",
+                transition: "Zoom",
+            });
+            navigate("/");
+        } catch (error) {
+            toast.error('Login failed', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "Colored",
+                transition: "Zoom",
+            });
+            console.error("Login failed:", error);
+        }
     };
 
     return (
@@ -31,68 +60,42 @@ const LoginPage = () => {
                 justifyContent: "center",
                 alignItems: "flex-end",
                 minHeight: "100vh",
-                padding: 2,
-                backgroundImage: ''
+                backgroundImage: `url(${AuthBannerImage})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover"
             }}
         >
             <Box
-                component="form"
-                onSubmit={handleLogin}
                 sx={{
-                    maxWidth: 320,
+                    maxWidth: "100%",
                     width: "100%",
+                    height: "30vh",
                     padding: 3,
+                    backgroundColor: "#fff"
                 }}
             >
-                <Typography variant="h4" gutterBottom align="center">
-                    Login
-                </Typography>
-                <Stack spacing={2}>
-                    <TextField
-                        label="Email Address"
-                        name="email"
-                        type="email"
-                        fullWidth
-                        required
-                    />
-                    <TextField
-                        label="Password"
-                        name="password"
-                        type="password"
-                        fullWidth
-                        required
-                    />
+                    <Typography variant="h5" gutterBottom align="center">📸 Vibesnap</Typography>
+                    <Typography variant="body2" align="center">Moments that matter, shared forever</Typography>
+                <Box sx={{
+                    width: "100%",
+                    height: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
                     <Button
-                        type="submit"
                         variant="contained"
-                        color="primary"
-                        fullWidth
-                    >
-                        Login
-                    </Button>
-                    <Button
-                        variant="outlined"
+                        color="appleBlack"
+                        sx={{color: "white"}}
                         startIcon={<GoogleIcon />}
-                        fullWidth
-                        onClick={handleLoginWithGoogle}
+                        onClick={handleGoogleLogin}
+                        disabled={isLoading}
+                        // endIcon={isLoading ? <CircularProgress/> : ''}
                     >
                         Login with Google
                     </Button>
-                </Stack>
-                <Typography
-                    variant="body2"
-                    align="center"
-                    sx={{ marginTop: 2 }}
-                >
-                    Don't have an account?{" "}
-                    <Link
-                        component="button"
-                        onClick={() => navigate("/signup")}
-                        underline="hover"
-                    >
-                        Sign up
-                    </Link>
-                </Typography>
+                </Box>
             </Box>
         </Box>
     );

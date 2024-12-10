@@ -1,26 +1,51 @@
-// postSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import supabase from "../../services/supabaseService";
+
+export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({page, limit}, {rejectWithValue}) => {
+    try {
+        const start = (page - 1) * limit;
+        const end = start + limit - 1;
+
+        // Fetch posts from Supabase with pagination
+        const { data, error } = await supabase
+            .from("posts")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .range(start, end);
+
+        if (error) {
+            return rejectWithValue(error.message);
+        }
+
+        return data;
+    } catch (error) {
+        rejectWithValue(error.message);
+    }
+})
 
 const postSlice = createSlice({
     name: "posts",
     initialState: {
-        data: [],
+        posts: [],
         loading: false,
         error: null,
     },
     reducers: {
-        fetchPostsStart(state) {
-            state.loading = true;
-            state.error = null;
-        },
-        fetchPostsSuccess(state, action) {
-            state.data = action.payload;
-            state.loading = false;
-        },
-        fetchPostsError(state, action) {
-            state.loading = false;
-            state.error = action.payload;
-        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPosts.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.posts = [...state.posts, ...action.payload]
+            })
+            .addCase(fetchPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     },
 });
 

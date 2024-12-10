@@ -35,7 +35,7 @@ export const getUserProfile = async (username) => {
     try {
         const { data, error } = await supabase
             .from('users')
-            .select()
+            .select('*')
             .eq('username', username)
             .limit(1)
 

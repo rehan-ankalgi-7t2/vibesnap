@@ -16,6 +16,7 @@ const theme = createTheme({
         },
         appleBlack: {
             main: "#161618",
+            contrastText: "#fff"
         },
         white: {
             main: "#ffffff",

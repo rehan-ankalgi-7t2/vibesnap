@@ -13,7 +13,7 @@ const routes = createBrowserRouter([
         element: <App />,
         children: [
             {
-                path: "feed", // Relative path to `/app/feed`
+                path: "", // Relative path to `/app/feed`
                 element: <ProtectedRoute>
                         <FeedPage />,
                     </ProtectedRoute>
