@@ -14,6 +14,10 @@ const theme = createTheme({
         greenStroke: {
             main: "#11AF22",
         },
+        primary: {
+            main: "#161618",
+            contrastText: "#fff"
+        },
         appleBlack: {
             main: "#161618",
             contrastText: "#fff"
@@ -46,6 +50,21 @@ const theme = createTheme({
             main: "#7C7C7C",
         },
     },
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    variants: [
+                        {   props: {},
+                            style: {
+                                borderRadius: "50px"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
 });
 
 export default theme;

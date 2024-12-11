@@ -23,6 +23,26 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({page, lim
     }
 })
 
+export const createNewPost = createAsyncThunk("posts/createNewPost", async (postData, {rejectWithValue}) => {
+    try {
+        // upload all files to the bucket
+        // retrive all the file links
+
+        // insert the post in the db
+        const { error } = await supabase
+            .from('posts')
+            .insert({
+                // post data
+            })
+
+        if (error) {
+            return customResponse(false, 'error creating post', null, error)
+        }
+    } catch (error) {
+        rejectWithValue(error.message);
+    }
+})
+
 const postSlice = createSlice({
     name: "posts",
     initialState: {

@@ -6,6 +6,7 @@ import ProfilePage from "../pages/ProfilePage";
 import Signin from "../pages/Signin";
 import ProtectedRoute from "../components/ProtectedRoute";
 import LoginPage from "../pages/LoginPage";
+import NewPostPage from "../pages/NewPostPage";
 
 const routes = createBrowserRouter([
     {
@@ -25,6 +26,13 @@ const routes = createBrowserRouter([
                     <ProfilePage />,
                 </ProtectedRoute>
             },
+            {
+                path: "new-post",
+                element: 
+                // <ProtectedRoute>
+                    <NewPostPage/>
+                // </ProtectedRoute>
+            }
         ],
     },
     {
