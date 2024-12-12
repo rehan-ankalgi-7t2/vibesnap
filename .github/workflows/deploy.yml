@@ -1,0 +1,32 @@
+# .github/workflows/deploy-backend.yml
+name: Deploy Frontend to Render
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        npm install
+
+
+    - name: Deploy to Render
+      run: |
+        curl --request POST \
+            --url https://api.render.com/v1/services/${{secrets.RENDER_SERVICE_ID}}/deploys \
+            --header 'accept: application/json' \
+            --header 'authorization: Bearer ${{secrets.RENDER_API_KEY}}' \
+            --header 'content-type: application/json' \
+            --data '
+        {
+          "clearCache": "clear"
+        }
+        '

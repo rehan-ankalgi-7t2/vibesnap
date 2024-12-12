@@ -5,8 +5,10 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import 'swiper/css';
+import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import { FreeMode, Pagination } from 'swiper/modules';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const NewPostPage = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -100,44 +102,59 @@ const NewPostPage = () => {
   return (
     <div className='p-4'>
         <Button onClick={navigateBack} startIcon={<ArrowBackIosNewIcon/>} color='apple-black' variant='text'>back</Button>
-        <h1>New Post</h1>
-        <form className='h-[88vh] flex flex-col justify-between'>
+          <form className='h-[88vh] flex flex-col justify-between mt-2 lg:w-[800px] md:w-[600px] sm:w-[400px] mx-auto'>
             <div>
-                <div className='h-40 flex items-center justify-center'>
-                    <Button
-                        component='label'
-                        role={undefined}
-                        variant='contained'
-                        tabIndex={-1}
-                        startIcon={<CloudUpload />}
-                        disableElevation
-
+            <h1 className='mb-4'>New Post</h1>
+                {selectedFiles.length > 0 ? (
+                    <Swiper
+                        spaceBetween={16}
+                        slidesPerView={1.2}
+                        // onSlideChange={() => console.log('slide change')}
+                        onSwiper={(swiper) => console.log(swiper)}
+                        navigation
+                        pagination={{ clickable: true }}
+                        freeMode={true}
+                        modules={[FreeMode, Pagination]}
+                        scrollbar={{ draggable: true }}
+                        className='mb-5'
                     >
-                        Upload Media
-                        <VisuallyHiddenInput type='file' onChange={handleFileChange} multiple accept="image/*" />
-                    </Button>
-                </div>
-                <p>{`Selected files: ${selectedFiles.length}/${MAX_FILES}`}</p>
-                <Swiper
-                    spaceBetween={40}
-                    slidesPerView={1}
-                    // onSlideChange={() => console.log('slide change')}
-                    onSwiper={(swiper) => console.log(swiper)}
-                    navigation
-                    pagination={{ clickable: true }}
-                    scrollbar={{ draggable: true }}
-                    className='my-5'
-                >
-                    {selectedFiles.map((file, index) => (
-                        <SwiperSlide pagination="true" modules={[Pagination]} key={index} className='flex flex-col w-[160px] h-[160px] items-center justify-between border-2'>
-                            <img src={URL.createObjectURL(file)} alt={file.name} className='w-full' />
-                            <Button variant='contained' color='white' onClick={() => handleRemoveFile(index)} sx={{ position: "absolute", top: 4, right: 4, backgroundColor: "#fffa", aspectRatio: '1' }}><Delete/></Button>
-                            {/* <IconButton color='error' onClick={() => handleRemoveFile(index)} sx={{position: "absolute", top: 0, right: 0, backgroundColor: "white"}}>
-                                <Delete/>
-                            </IconButton> */}
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
+                        {selectedFiles.map((file, index) => (
+                            <SwiperSlide key={index} className='flex flex-col w-full md:h-[400px] sm:h-[320px] bg-cover bg-center items-center justify-center rounded-xl'>
+                                <img src={URL.createObjectURL(file)} alt={file.name} className='md:h-[320px] sm:h-[200px] w-full  bg-cover bg-center rounded-xl object-cover' />
+                                <Button variant='contained'
+                                    size='small' 
+                                    color='white' 
+                                    onClick={() => handleRemoveFile(index)} 
+                                    sx={{ 
+                                        position: "absolute", 
+                                        top: 4, 
+                                        right: 4, 
+                                        backgroundColor: "#fffa", 
+                                        aspectRatio: '1', 
+                                        backdropFilter: 'blur(4px)' 
+                                        }}>
+                                    <Delete/>
+                                </Button>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                ) : (
+                    <div className='h-40 flex flex-col items-center justify-center border rounded-md gap-2'>
+                        <Button
+                            component='label'
+                            role={undefined}
+                            variant='contained'
+                            tabIndex={-1}
+                            startIcon={<CloudUpload />}
+                            disableElevation
+                        >
+                            Upload Media
+                            <VisuallyHiddenInput type='file' onChange={handleFileChange} multiple accept="image/*" />
+                        </Button>
+                    </div>
+
+                )}
+                <p className='mb-4'>{`Selected files: ${selectedFiles.length}/${MAX_FILES}`}</p>
                 <TextField
                     autoFocus
                     required
@@ -147,15 +164,15 @@ const NewPostPage = () => {
                     label="Write a striking caption"
                     type="text"
                     fullWidth
-                    variant="standard"
+                    variant="outlined"
                     multiline
                     rows={4}
                     sx={{ width: "100%", marginBottom: "24px" }}
                 />
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', marginTop: '24px', overflowY: "scroll"}} className="mb-5">
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', marginTop: '24px'}} className="mb-5">
                     <TextField
                         label="Add some hashtags"
-                        variant="standard"
+                        variant="outlined"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
