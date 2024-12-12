@@ -6,6 +6,8 @@ import NewpostModalForm from '../components/NewpostModalForm'
 import { fetchPosts } from '../features/posts/postSlice'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import Post from '../components/Post'
 
 const FeedPage = () => {
     const [page, setPage] = useState(1);
@@ -14,15 +16,15 @@ const FeedPage = () => {
     const { posts, error } = useSelector((state) => state.posts);
     const [isModalOpen, setisModalOpen] = useState(false);
     const limit = 10; // Posts per page
+	const navigate = useNavigate();
 
-    console.log("YO THARE POSTS!", posts);
-    
     const handleClose = () => {
         setisModalOpen(false);
     }
-    
+
     const handleOpen = () => {
-        setisModalOpen(true);
+        // setisModalOpen(true);
+		navigate("/new-post");
     }
 
     const loadMorePosts = async () => {
@@ -51,16 +53,18 @@ const FeedPage = () => {
   return (
     <div>
       <Header/>
-      <div>
-          {posts.map((post) => (
-            
-              <p>{post.content}</p>
-          ))}
-          {loading && <p>Loading...</p>}
-          {error && <p>Error: {error}</p>}
-      </div>
-      <FloatingActionButton handleClick={handleOpen}/>
-      <NewpostModalForm isOpen={isModalOpen} handleClose={handleClose}/>
+	  <div className='p-4'>
+		<h1 className='font-bold mb-4'>Feeds</h1>
+		<div>
+			{posts.map((post) => (
+				<Post post={post} key={post.id}/>
+		))}
+			{loading && <p>Loading...</p>}
+			{error && <p>Error: {error}</p>}
+		</div>
+		<FloatingActionButton handleClick={handleOpen}/>
+	  </div>
+      {/* <NewpostModalForm isOpen={isModalOpen} handleClose={handleClose}/> */}
     </div>
   )
 }

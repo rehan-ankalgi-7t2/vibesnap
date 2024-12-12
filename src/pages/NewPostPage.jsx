@@ -9,6 +9,10 @@ import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 import { FreeMode, Pagination } from 'swiper/modules';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { uploadFilesToSupabase } from '../utils/fileHelper';
+import { useSelector } from 'react-redux';
+import { createNewPost } from '../features/posts/postSlice';
+import { toast } from 'react-toastify';
 
 const NewPostPage = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -18,6 +22,7 @@ const NewPostPage = () => {
     const MAX_FILES = 5; // Maximum number of files allowed
     const MAX_HASHTAGS_COUNT = 10;
     const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -79,18 +84,39 @@ const NewPostPage = () => {
             const fileUrls = await uploadFilesToSupabase(selectedFiles);
             console.log("MALIK FILE URLS IDHAR HAI: ", fileUrls);
             formJson.mediaFiles = fileUrls; // Replace file names with URLs
-
-            // Add hashtags
             formJson.hashtags = chips;
+            formJson.author_id = user?.id || null;
 
             console.log("POST FORM DATA: ", formJson);
 
-            // Handle form submission logic (e.g., API call)
-            // await handlePostSubmission(formJson);
+			const data = await createNewPost(formJson);
 
-            // Close dialog
-            handleClose();
+			if(data){
+				toast.success('Post published 🚀', {
+					position: "top-right",
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+					transition: "zoom",
+				});
+				navigate("/");
+			}
         } catch (error) {
+			toast.error('Post was not published', {
+				position: "top-right",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+				transition: "zoom",
+			});
             console.error("Error uploading files or submitting post:", error)
         }
     }
@@ -102,7 +128,7 @@ const NewPostPage = () => {
   return (
     <div className='p-4'>
         <Button onClick={navigateBack} startIcon={<ArrowBackIosNewIcon/>} color='apple-black' variant='text'>back</Button>
-          <form className='h-[88vh] flex flex-col justify-between mt-2 lg:w-[800px] md:w-[600px] sm:w-[400px] mx-auto'>
+          <form onSubmit={handleFormSubmit} className='h-[88vh] flex flex-col justify-between mt-2 lg:w-[800px] md:w-[600px] sm:w-[400px] mx-auto'>
             <div>
             <h1 className='mb-4'>New Post</h1>
                 {selectedFiles.length > 0 ? (
@@ -122,16 +148,16 @@ const NewPostPage = () => {
                             <SwiperSlide key={index} className='flex flex-col w-full md:h-[400px] sm:h-[320px] bg-cover bg-center items-center justify-center rounded-xl'>
                                 <img src={URL.createObjectURL(file)} alt={file.name} className='md:h-[320px] sm:h-[200px] w-full  bg-cover bg-center rounded-xl object-cover' />
                                 <Button variant='contained'
-                                    size='small' 
-                                    color='white' 
-                                    onClick={() => handleRemoveFile(index)} 
-                                    sx={{ 
-                                        position: "absolute", 
-                                        top: 4, 
-                                        right: 4, 
-                                        backgroundColor: "#fffa", 
-                                        aspectRatio: '1', 
-                                        backdropFilter: 'blur(4px)' 
+                                    size='small'
+                                    color='white'
+                                    onClick={() => handleRemoveFile(index)}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 4,
+                                        right: 4,
+                                        backgroundColor: "#fffa",
+                                        aspectRatio: '1',
+                                        backdropFilter: 'blur(4px)'
                                         }}>
                                     <Delete/>
                                 </Button>
@@ -197,7 +223,7 @@ const NewPostPage = () => {
                     </Box>
                 </Box>
             </div>
-            <Button variant='contained' fullWidth className='bottom-0 mt-auto'>create</Button>
+            <Button type='submit' variant='contained' fullWidth className='bottom-0 mt-auto'>create</Button>
         </form>
     </div>
   )

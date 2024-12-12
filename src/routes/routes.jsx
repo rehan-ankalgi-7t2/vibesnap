@@ -15,23 +15,24 @@ const routes = createBrowserRouter([
         children: [
             {
                 path: "", // Relative path to `/app/feed`
-                element: <ProtectedRoute>
+                element:
+				<ProtectedRoute>
                         <FeedPage />,
                     </ProtectedRoute>
             },
             {
                 path: "profile", // Relative path to `/app/profile`
-                element: 
+                element:
                 <ProtectedRoute>
                     <ProfilePage />,
                 </ProtectedRoute>
             },
             {
                 path: "new-post",
-                element: 
-                // <ProtectedRoute>
+                element:
+                <ProtectedRoute>
                     <NewPostPage/>
-                // </ProtectedRoute>
+                </ProtectedRoute>
             }
         ],
     },

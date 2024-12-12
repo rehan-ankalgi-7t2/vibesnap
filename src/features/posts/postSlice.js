@@ -9,7 +9,15 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({page, lim
         // Fetch posts from Supabase with pagination
         const { data, error } = await supabase
             .from("posts")
-            .select("*")
+			.select(`
+				*,
+				users:author_id (
+					id,
+					username,
+					email,
+					avatar
+				)
+			`)
             .order("created_at", { ascending: false })
             .range(start, end);
 
@@ -25,19 +33,19 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({page, lim
 
 export const createNewPost = createAsyncThunk("posts/createNewPost", async (postData, {rejectWithValue}) => {
     try {
-        // upload all files to the bucket
-        // retrive all the file links
-
-        // insert the post in the db
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('posts')
-            .insert({
-                // post data
-            })
+            .insert([
+                { author_id: postData?.author_id, content: postData.description, media: postData.mediaFiles, hashtags: postData.hashtags },
+            ])
+            .select()
+
 
         if (error) {
             return customResponse(false, 'error creating post', null, error)
         }
+
+		return data;
     } catch (error) {
         rejectWithValue(error.message);
     }
@@ -60,7 +68,8 @@ const postSlice = createSlice({
             })
             .addCase(fetchPosts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.posts = [...state.posts, ...action.payload]
+                // state.posts = [...state.posts, ...action.payload]
+                state.posts = [...action.payload]
             })
             .addCase(fetchPosts.rejected, (state, action) => {
                 state.loading = false;
