@@ -5,6 +5,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 const NewPostPage = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -116,21 +118,6 @@ const NewPostPage = () => {
                     </Button>
                 </div>
                 <p>{`Selected files: ${selectedFiles.length}/${MAX_FILES}`}</p>
-                {/* <ul>
-                    {selectedFiles.map((file, index) => (
-                        <div>
-                            <li className='flex flex-row w-full items-center justify-between py-2' key={index}>
-                                {file.name}
-                                {console.log(file)}
-                                <img src={URL.createObjectURL(file)} alt={file.name} className='h-[40px]'/>
-                                <IconButton color='error' onClick={() => handleRemoveFile(index)}>
-                                    <Delete />
-                                </IconButton>
-                            </li>
-                            <Divider></Divider>
-                        </div>
-                    ))}
-                </ul> */}
                 <Swiper
                     spaceBetween={40}
                     slidesPerView={1}
@@ -142,12 +129,12 @@ const NewPostPage = () => {
                     className='my-5'
                 >
                     {selectedFiles.map((file, index) => (
-                        <SwiperSlide key={index} className='flex flex-col w-[160px] h-[160px] items-center justify-between py-2 border-2'>
+                        <SwiperSlide pagination="true" modules={[Pagination]} key={index} className='flex flex-col w-[160px] h-[160px] items-center justify-between border-2'>
                             <img src={URL.createObjectURL(file)} alt={file.name} className='w-full' />
-                            {file.name}
-                            <IconButton color='error' onClick={() => handleRemoveFile(index)}>
-                                <Delete />
-                            </IconButton>
+                            <Button variant='contained' color='white' onClick={() => handleRemoveFile(index)} sx={{ position: "absolute", top: 4, right: 4, backgroundColor: "#fffa", aspectRatio: '1' }}><Delete/></Button>
+                            {/* <IconButton color='error' onClick={() => handleRemoveFile(index)} sx={{position: "absolute", top: 0, right: 0, backgroundColor: "white"}}>
+                                <Delete/>
+                            </IconButton> */}
                         </SwiperSlide>
                     ))}
                 </Swiper>
