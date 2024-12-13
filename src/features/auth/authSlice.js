@@ -75,7 +75,7 @@ export const googleSignIn = createAsyncThunk(
 );
 
 const initialState = {
-    user: null,
+    user: localStorage.getItem('vibesnapUser') || null,
     token: localStorage.getItem('vibeSnapToken') || '',
     isLoading: false,
     error: null
@@ -87,6 +87,9 @@ export const authSlice = createSlice({
     reducers: {
         logOut: () => {
             state.user = null;
+			state.token = '';
+			localStorage.removeItem('vibeSnapToken');
+			localStorage.removeItem('vibesnapUser');
         }
     },
     extraReducers: (builder) => {
@@ -99,13 +102,13 @@ export const authSlice = createSlice({
                 state.isLoading = false;
                 state.user = action.payload.user;
                 localStorage.setItem('vibeSnapToken', action.payload.token)
-                state.token = action.payload.token
+				localStorage.setItem('vibesnapUser', JSON.stringify(action.payload.user));
             })
             .addCase(googleSignIn.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });
-    },   
+    },
 
 })
 

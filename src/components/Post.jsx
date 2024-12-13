@@ -9,14 +9,14 @@ const Post = ({post}) => {
 	const dispatch = useDispatch();
 
 	const handleLike = async (postId, userId) => {
-		dispatch(likePost({postId, userId}))
-		.unwrap()
-		.then(() => {
+		// dispatch(likePost({postId, userId}))
+		// .unwrap()
+		// .then(() => {
 
-		})
-		.catch((error) => {
+		// })
+		// .catch((error) => {
 
-		})
+		// })
 	}
 
   return (
@@ -46,7 +46,7 @@ const Post = ({post}) => {
         <img src={post.media[0]} className='w-full bg-cover rounded-xl'/>:
         slider}
         <div className='pt-4 flex flex-row items-center justify-between'>
-              <Button variant='contained' onClick={handleLike(post.id, post.author_id)} sx={{backgroundColor: 'lightpink', borderRadius: 8, fontWeight: 700}} endIcon={<FavoriteIcon color='orange'/>} disableElevation>{post.likes}</Button>
+              <Button variant='contained' onClick={handleLike} sx={{backgroundColor: 'lightpink', borderRadius: 8, fontWeight: 700}} endIcon={<FavoriteIcon color='orange'/>} disableElevation>{post.likes}</Button>
               <Button variant='outlined' sx={{ borderRadius: 8 }} color='disabled' className='rounded-2xl' endIcon={<SendIcon color='red'/>} disableElevation>share</Button>
         </div>
     </article>
