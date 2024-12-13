@@ -31,6 +31,30 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({page, lim
     }
 })
 
+export const fetchProfilePosts = createAsyncThunk("posts/fetchProfilePosts", async ({ page, limit }, { rejectWithValue }) => {
+	try {
+		const user = JSON.parse(localStorage.getItem('vibesnapUser'));
+		const start = (page - 1) * limit;
+		const end = start + limit - 1;
+
+		// Fetch posts from Supabase with pagination
+		const { data, error } = await supabase
+			.from("posts")
+			.select()
+			.eq('author_id', user?.id)
+			.order("created_at", { ascending: false })
+			.range(start, end);
+
+		if (error) {
+			return rejectWithValue(error.message);
+		}
+
+		return data;
+	} catch (error) {
+		rejectWithValue(error.message);
+	}
+})
+
 export const createNewPost = createAsyncThunk("posts/createNewPost", async (postData, {rejectWithValue}) => {
     try {
         const { data: newPost, error: insertError } = await supabase
@@ -94,6 +118,20 @@ const postSlice = createSlice({
                 state.posts = [...action.payload]
             })
             .addCase(fetchPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+			.addCase(fetchProfilePosts.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+			.addCase(fetchProfilePosts.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.posts = [...state.posts, ...action.payload]
+				console.log(action.payload)
+                state.posts = [...action.payload]
+            })
+			.addCase(fetchProfilePosts.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

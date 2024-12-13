@@ -85,7 +85,7 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        logOut: () => {
+        logOut: (state, action) => {
             state.user = null;
 			state.token = '';
 			localStorage.removeItem('vibeSnapToken');
