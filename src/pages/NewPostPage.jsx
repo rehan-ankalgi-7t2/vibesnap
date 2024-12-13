@@ -13,6 +13,7 @@ import { uploadFilesToSupabase } from '../utils/fileHelper';
 import { useSelector } from 'react-redux';
 import { createNewPost } from '../features/posts/postSlice';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 
 const NewPostPage = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -23,6 +24,7 @@ const NewPostPage = () => {
     const MAX_HASHTAGS_COUNT = 10;
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
+	const dispatch = useDispatch();
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -87,12 +89,13 @@ const NewPostPage = () => {
             formJson.hashtags = chips;
             formJson.author_id = user?.id || null;
 
-            console.log("POST FORM DATA: ", formJson);
+            // console.log("POST FORM DATA: ", formJson);
 
-			const data = await createNewPost(formJson);
-
-			if(data){
-				toast.success('Post published 🚀', {
+			dispatch(createNewPost(formJson))
+			.unwrap()
+			.then(() => {
+				toast.success()
+				toast.error('Post published 🚀', {
 					position: "top-right",
 					autoClose: 3000,
 					hideProgressBar: false,
@@ -101,12 +104,24 @@ const NewPostPage = () => {
 					draggable: true,
 					progress: undefined,
 					theme: "colored",
-					transition: "zoom",
 				});
-				navigate("/");
-			}
+				navigate("/")
+			}).catch((error) => {
+				toast.error(`${error.message}`, {
+					position: "top-right",
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				console.error("Error uploading files or submitting post:", error.message)
+			})
+
         } catch (error) {
-			toast.error('Post was not published', {
+			toast.error(`${error.message}`, {
 				position: "top-right",
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -115,9 +130,8 @@ const NewPostPage = () => {
 				draggable: true,
 				progress: undefined,
 				theme: "colored",
-				transition: "zoom",
 			});
-            console.error("Error uploading files or submitting post:", error)
+            console.error("Error uploading files or submitting post:", error.message)
         }
     }
 
